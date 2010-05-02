@@ -33,16 +33,27 @@ object TideTweet {
      
      val tweet = gmt_tides match {
        
-       case Nil => "Gah! Failed to find tide times today... @d6y help!"
+       case Right(Nil) => "Gah! Failed to find tide times today... @d6y help!"
        
-       case tide :: Nil => today.toString("'Low tide for 'EE d MMM': '") + tide.forZone(tz)
+       case Right(tide :: Nil) => today.toString("'Low tide for 'EE d MMM': '") + tide.forZone(tz)
        
-       case tides => today.toString("'Low tides for 'EE d MMM': '") + tides.map {_.forZone(tz)}.mkString(", ")
+       case Right(tides) => today.toString("'Low tides for 'EE d MMM': '") + tides.map {_.forZone(tz)}.mkString(", ")
+       
+       case Left(msg) => "No tide times. @d6y pls help with "+msg
      }
      
-     println(tweet)
      
-     // post the tweet
+     // post the tweet:
+     args match {
+       
+       case Array(consumer_secret, token_secret) => 
+       
+       case _ => 
+         	println("Not posting as consumer and token information not provided on the command line")
+            println(tweet)
+ 
+     }
+     
      
   }
   

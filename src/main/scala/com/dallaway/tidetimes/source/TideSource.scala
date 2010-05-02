@@ -28,6 +28,9 @@ case class Tide(when:LocalTime, height:Metre) {
   def forZone(destZone:DateTimeZone) = Tide(when.toDateTimeToday(DateTimeZone.forID("GMT")).withZone(destZone).toLocalTime(), height)  
 }
 
+
+
 trait TideSource {	
-	def lowsFor(day:LocalDate): List[Tide]
+    type Error = String
+	def lowsFor(day:LocalDate): Either[Error, List[Tide]]
 }

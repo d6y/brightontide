@@ -42,8 +42,10 @@ class VisitBrightonScraper extends TideSource {
      def toLocalTime = new LocalTime(parts(0).toInt,parts(1).toInt) 
    }
   
+   
  
-  override def lowsFor(day:LocalDate) = {
+
+  override def lowsFor(day:LocalDate) : Either[Error,List[Tide]] = {
  
    // We want the records that start with the date in this format: 10th May 2009
    val date = day.ordinal + DateTimeFormat.forPattern(" MMMM yyyy").print(day); 
@@ -65,11 +67,11 @@ class VisitBrightonScraper extends TideSource {
        				} yield 
        					Tide( time_string.toLocalTime, Metre(height.toDouble) )
 	  
-	  tides.toList
+	  Right(tides.toList)
    }
    catch {
-    case x:scala.MatchError => println(x); Nil
-    case x:NumberFormatException => println(x); Nil
+    case x:scala.MatchError => Left(x.getMessage)
+    case x:NumberFormatException => Left(x.getMessage)
     
    }	
   
