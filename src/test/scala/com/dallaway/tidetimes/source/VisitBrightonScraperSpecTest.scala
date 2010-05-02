@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009 Richard Dallaway
+  Copyright 2009-2010 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -23,17 +23,15 @@ import org.specs.matcher._
 import scala.io.Source
 import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
   
-object MockScraper extends VisitBrightonScraper {
-   override def page = Source.fromFile("src/test/resources/visitbrighton07052009.html", "UTF-8").mkString
-}
 
-object VisitBrightonScraperSpec extends Specification {
+
+class VisitBrightonScraperSpecTest extends SpecificationWithJUnit {
 
    "Visit Brighton screen scraper" should {
      
     "locate low tide in first day" in { 
    
-      val tides = MockScraper.lowsFor(new LocalDate(2009, 5, 7))
+      val tides = MockScraper.use("src/test/resources/visitbrighton07052009.html").lowsFor(new LocalDate(2009, 5, 7))
       tides.length must be_==(2)
       
       val expected = List( Tide(new LocalTime(3,38), Metre(1.0)), 
@@ -42,9 +40,10 @@ object VisitBrightonScraperSpec extends Specification {
       tides must be_==(expected)
     }
     
-     "locate low tide in last day" in { 
+    
+    "locate low tide in last day" in { 
    
-      val tides = MockScraper.lowsFor(new LocalDate(2009, 5, 13))
+      val tides = MockScraper.use("src/test/resources/visitbrighton07052009.html").lowsFor(new LocalDate(2009, 5, 13))
       tides.length must be_==(2)
       
       val expected = List( Tide(new LocalTime(7,20), Metre(1.2)), 
@@ -56,12 +55,8 @@ object VisitBrightonScraperSpec extends Specification {
     
     "Can handle days when there is only one tide" in {
 
-      // Different test data:
-      object MockScraper extends VisitBrightonScraper {
-    	  override def page = Source.fromFile("src/test/resources/visitbrighton18052009.html", "UTF-8").mkString
-      }
-      
-      val tides = MockScraper.lowsFor(new LocalDate(2009, 5, 18))
+     
+      val tides = MockScraper.use("src/test/resources/visitbrighton18052009.html").lowsFor(new LocalDate(2009, 5, 18))
       tides.length must be_==(1)
       
       val expected = List( Tide(new LocalTime(11,31), Metre(2.1)) )
