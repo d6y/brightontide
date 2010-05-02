@@ -20,10 +20,7 @@ import org.specs._
 import org.specs.runner._
 import org.specs.matcher._
 
-import scala.io.Source
 import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
-  
-
 
 class VisitBrightonScraperSpecTest extends SpecificationWithJUnit {
 
@@ -40,7 +37,7 @@ class VisitBrightonScraperSpecTest extends SpecificationWithJUnit {
       tides must be_==(expected)
     }
     
-    
+       
     "locate low tide in last day" in { 
    
       val tides = MockScraper.use("src/test/resources/visitbrighton07052009.html").lowsFor(new LocalDate(2009, 5, 13))

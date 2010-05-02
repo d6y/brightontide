@@ -92,7 +92,7 @@
      </dependency>
      <dependency>
     	<groupId>net.databinder</groupId>
-    	<artifactId>dispatch-oauth_${scala.version}</artifactId>
+    	<artifactId>dispatch-twitter_${scala.version}</artifactId>
     	<version>0.7.3</version>
     </dependency>
     </dependencies>
