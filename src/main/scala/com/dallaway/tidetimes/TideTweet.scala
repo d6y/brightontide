@@ -30,7 +30,6 @@ object TideTweet {
      val tz = DateTimeZone.getDefault
      
      // Formulate the tweet to send:
-     
      val tweet = gmt_tides match {
        
        case Right(Nil) => "Gah! Failed to find tide times today... @d6y help!"
@@ -43,10 +42,23 @@ object TideTweet {
      }
      
      
-     // post the tweet:
      args match {
        
-       case Array(consumer_secret, token_secret) => 
+        // post the tweet via http://dev.twitter.com/pages/oauth_single_token
+       case Array(consumer_secret, access_token_secret) => 
+    
+         import dispatch._
+         import dispatch.twitter._
+         import dispatch.oauth._
+   
+         val beta_consumer_key = "LzYwlU8hXtgnENzhHTRtQ"
+         val beta_token_value = "139051242-XlBftSuWAYgANsDlTK9xPnqKazDlHMWiEaM1SY50"
+         
+         val consumer = Consumer(beta_consumer_key, consumer_secret)
+         val single_access_token = Token(beta_token_value, access_token_secret)
+    
+         val http = new Http()
+         http(Status.update(tweet, consumer, single_access_token) >- {println(_)} )
        
        case _ => 
          	println("Not posting as consumer and token information not provided on the command line")
