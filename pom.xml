@@ -101,9 +101,21 @@
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
-        <version>2.9.1</version>
+        
         <configuration>
           <scalaVersion>${scala.version}</scalaVersion>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>appassembler-maven-plugin</artifactId>
+        <configuration>
+          <programs>
+            <program>
+              <mainClass>com.dallaway.tidetimes.TideTweet</mainClass>
+              <name>tidetweet</name>
+             </program>
+            </programs>
         </configuration>
       </plugin>
     </plugins>

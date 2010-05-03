@@ -3,6 +3,10 @@ from VisitBrighton.com and post them to Twitter.
 
 http://blog.spiralarm.com/richard/2009/05/still-loving-scala.html
 
+RUNNING THE APP
+
+$ mvn package appassembler:assemble
+$ sh target/appassembler/bin/tidetweet
 
 RUNNING THE SPECS TESTS
 
