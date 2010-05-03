@@ -51,8 +51,13 @@ object TideTweet {
          import dispatch.twitter._
          import dispatch.oauth._
    
+         // for @betabtontide
          val beta_consumer_key = "LzYwlU8hXtgnENzhHTRtQ"
          val beta_token_value = "139051242-XlBftSuWAYgANsDlTK9xPnqKazDlHMWiEaM1SY50"
+         
+         // for @brightontide
+         val consumer_key = "G7NJtEPY9YmLrTDkjKR9cA"
+         val token_value = "38545450-aD6lKmRTZVIQSkjBBmFm7R82UDXZMlp26udwA7MjV"
          
          val consumer = Consumer(beta_consumer_key, consumer_secret)
          val single_access_token = Token(beta_token_value, access_token_secret)
