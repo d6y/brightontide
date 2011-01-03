@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes
 
 /*
-  Copyright 2009-2010 Richard Dallaway
+  Copyright 2009-2011 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ object TideTweet {
        
        case Right(tides) => today.toString("'Low tides for 'EE d MMM': '") + tides.map {_.forZone(tz)}.mkString(", ")
        
-       case Left(msg) => "No tide times. @d6y pls help with "+msg
+       case Left(msg) => "No tide times found today. @d6y please help."
      }
      
      
