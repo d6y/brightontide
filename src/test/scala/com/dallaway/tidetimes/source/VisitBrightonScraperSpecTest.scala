@@ -22,7 +22,7 @@ import org.specs.matcher._
 
 import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
 
-class VisitBrightonScraperSpecTest extends SpecificationWithJUnit {
+class VisitBrightonScraperSpecTest extends Specification {
 
    "Visit Brighton screen scraper" should {
      

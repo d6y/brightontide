@@ -5,15 +5,14 @@ http://richard.dallaway.com/still-loving-the-scala
 
 RUNNING THE APP
 
-$ mvn package appassembler:assemble
-$ sh target/appassembler/bin/tidetweet
+$ sbt run
 
 RUNNING THE SPECS TESTS
 
-Running the Specs test in Eclipse using Scala 2.7.7 follows the pattern
-outlined at https://www.assembla.com/wiki/show/scala-ide/Using_Unit_Testing_Frameworks
+$ sbt test
 
-You need to:
- - enable Maven dependency management if it's not already
- - follow the steps "Run your specification with JUnit4 in Eclipse" at
-   http://code.google.com/p/specs/wiki/RunningSpecs#Run_your_specification_with_JUnit4
+
+History:
+
+Prior to 3 Jan 2011, the VisitBrightonScraper was used for tide data.  Unfortunately, each January the web site contained no data for a few days, which is inconvenient.
+

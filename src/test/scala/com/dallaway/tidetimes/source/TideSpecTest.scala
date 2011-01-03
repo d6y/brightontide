@@ -22,7 +22,7 @@ import org.specs.runner._
 import org.specs.matcher._
 import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
 
-class TideSpecTest extends SpecificationWithJUnit {
+class TideSpecTest extends Specification {
 
   "Tide" should {
     "Be able to convert from GMT to BST" in {
