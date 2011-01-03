@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009-2010 Richard Dallaway
+  Copyright 2009-2011 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -70,9 +70,8 @@ class VisitBrightonScraper extends TideSource {
 	  Right(tides.toList)
    }
    catch {
-    case x:scala.MatchError => Left(x.getMessage)
-    case x:NumberFormatException => Left(x.getMessage)
-    
+    case x:scala.MatchError => Left("Match failed")
+    case x:NumberFormatException => Left(x.getMessage)    
    }	
   
   }

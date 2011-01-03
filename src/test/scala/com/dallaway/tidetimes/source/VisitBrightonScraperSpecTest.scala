@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009-2010 Richard Dallaway
+  Copyright 2009-2011 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -23,6 +23,14 @@ import org.specs.matcher._
 import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
 
 class VisitBrightonScraperSpecTest extends Specification {
+
+  object MockScraper {
+	import scala.io.Source
+    def use(path: String) = new VisitBrightonScraper {
+     override def page = Source.fromFile(path, "UTF-8").mkString 
+    }   
+  }
+
 
    "Visit Brighton screen scraper" should {
      
@@ -63,6 +71,13 @@ class VisitBrightonScraperSpecTest extends Specification {
       tides must be_==(expected)
     
     }
+
+
+	"Can handle days when no tide data is available" in { 
+      val tides = MockScraper.use("src/test/resources/visitbrighton03012010.html").lowsFor(new LocalDate(2011, 3, 1))
+	  tides must be_==( Left("Match failed") )
+    }
+
      
   }
    
