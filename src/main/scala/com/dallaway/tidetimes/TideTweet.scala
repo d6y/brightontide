@@ -14,7 +14,7 @@ package com.dallaway.tidetimes
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- */
+*/
 
 import source._
 import org.joda.time.{LocalDate,DateTimeZone}
@@ -24,7 +24,9 @@ object TideTweet {
   def main(args:Array[String]) {
     
      val today = new LocalDate
-     val gmt_tides = VisitBrightonScraper.lowsFor(today) 
+
+     // val gmt_tides = VisitBrightonScraper.lowsFor(today) 
+     val gmt_tides = EasyTideScraper.lowsFor(today) 
      
      // Time tides are in GMT, but we will later convert to whatever timezone we're in:
      val tz = DateTimeZone.getDefault

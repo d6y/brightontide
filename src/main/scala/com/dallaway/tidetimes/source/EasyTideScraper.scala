@@ -1,0 +1,67 @@
+package com.dallaway.tidetimes.source
+
+/*
+  Copyright 2009-2011 Richard Dallaway
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
+import org.joda.time.format.{DateTimeFormat,DateTimeFormatter}
+import scala.io.Source
+  
+
+object EasyTideScraper extends EasyTideScraper 
+
+class EasyTideScraper extends TideSource {
+
+  lazy val brighton_marina = "http://easytide.ukho.gov.uk/easytide/easytide/ShowPrediction.aspx?PortID=0082&PredictionLength=1"
+
+  def page = Source.fromURL(brighton_marina).mkString
+ 
+  override def lowsFor(day:LocalDate) : Either[Error,List[Tide]] = {
+ 
+   // We want the records that start with the date in this format: Mon 3 Jan
+   val date = DateTimeFormat.forPattern("E d MMM").print(day); 
+    
+   // The page is structured as three rows each containing a number of columns:
+   // headings (HW, LW); times (12:30), heights (1.6 m)
+   val PagePattern = 
+     """|(?sm).*<th class="HWLWTableHeaderCell">DATE</th>\s*</tr><tr>\s*
+        |<td><table[^>]*>\s*
+        |<tr>(.+?)</tr>\s*<tr>(.+?)</tr>\s*<tr>(.+?)</tr>.*""".stripMargin.replaceAll("\n","").replaceFirst("DATE", date).r
+    
+   try  {
+     val PagePattern(headings_html, times_html, heights_html) = page
+	 
+ 	// The values are surrounded by th or td tags
+    def deTag(html: String) = ">([^<]+)<".r.findAllIn(html).matchData map {_.group(1)}
+
+	// Select just the low water info:
+    val tides = (deTag(headings_html) zip (deTag(times_html) zip deTag(heights_html))) collect { case ("LW", info) => info } 
+	
+	val result = for ( (time_string, height_string) <- tides ) yield 
+               Tide( time_string.toLocalTime, height_string.toMetre )
+	  
+	  Right(result.toList)
+   }
+   catch {
+    case x:scala.MatchError => Left("Match failed")
+    case x:NumberFormatException => Left(x.getMessage)    
+   }	
+  
+  }
+ 
+  
+  
+}

@@ -14,12 +14,12 @@ package com.dallaway.tidetimes.source
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- */
+*/
 
 import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
 import org.joda.time.format.{DateTimeFormat,DateTimeFormatter}
 import scala.io.Source
-  
+
 object VisitBrightonScraper extends VisitBrightonScraper 
 
 class VisitBrightonScraper extends TideSource {
@@ -36,15 +36,6 @@ class VisitBrightonScraper extends TideSource {
 	   }
     }
    
-   // Convert "12:34" to LocalTme(12,34)
-   implicit def localTimeWrapper(time_string:String) = new {
-     val parts = time_string.split(":")
-     def toLocalTime = new LocalTime(parts(0).toInt,parts(1).toInt) 
-   }
-  
-   
- 
-
   override def lowsFor(day:LocalDate) : Either[Error,List[Tide]] = {
  
    // We want the records that start with the date in this format: 10th May 2009

@@ -5,14 +5,15 @@ http://richard.dallaway.com/still-loving-the-scala
 
 RUNNING THE APP
 
-$ sbt run
+$ sbt run consumer_key token_value consumer_secret access_token_secret
+
+Run without args to see what would have been Tweeted.
 
 RUNNING THE SPECS TESTS
 
 $ sbt test
 
-
 History:
 
-Prior to 3 Jan 2011, the VisitBrightonScraper was used for tide data.  Unfortunately, each January the web site contained no data for a few days, which is inconvenient.
+Prior to 3 Jan 2011, the VisitBrightonScraper was used for tide data.  Unfortunately, each January the web site contained no data for a few days, which is inconvenient.  So from 3 Jan, Easy Tide was added.
 
