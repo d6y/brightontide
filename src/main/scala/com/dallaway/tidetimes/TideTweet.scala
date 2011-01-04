@@ -33,14 +33,12 @@ object TideTweet {
      
      // Formulate the tweet to send:
      val tweet = gmt_tides match {
-       
-       case Right(Nil) => "Gah! Failed to find tide times today... @d6y help!"
-       
+            
        case Right(tide :: Nil) => today.toString("'Low tide for 'EE d MMM': '") + tide.forZone(tz)
        
        case Right(tides) => today.toString("'Low tides for 'EE d MMM': '") + tides.map {_.forZone(tz)}.mkString(", ")
        
-       case Left(msg) => "No tide times found today. @d6y please help."
+       case _ => "No tide times found today. @d6y please help."
      }
      
      

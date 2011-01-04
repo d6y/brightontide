@@ -25,6 +25,7 @@ object EasyTideScraper extends EasyTideScraper
 
 class EasyTideScraper extends TideSource {
 
+  // Other ports are available
   lazy val brighton_marina = "http://easytide.ukho.gov.uk/easytide/easytide/ShowPrediction.aspx?PortID=0082&PredictionLength=1"
 
   def page = Source.fromURL(brighton_marina).mkString
@@ -34,8 +35,8 @@ class EasyTideScraper extends TideSource {
    // We want the records that start with the date in this format: Mon 3 Jan
    val date = DateTimeFormat.forPattern("E d MMM").print(day); 
     
-   // The page is structured as three rows each containing a number of columns:
-   // headings (HW, LW); times (12:30), heights (1.6 m)
+   // The page is structured as three rows. We don't know how many columns, but it'll be the same for all rows.
+   // The rows are: headings (e.g., HW, LW); times (e.g., 12:30), heights (e.g., 1.6 m)
    val PagePattern = 
      """|(?sm).*<th class="HWLWTableHeaderCell">DATE</th>\s*</tr><tr>\s*
         |<td><table[^>]*>\s*
@@ -44,16 +45,16 @@ class EasyTideScraper extends TideSource {
    try  {
      val PagePattern(headings_html, times_html, heights_html) = page
 	 
- 	// The values are surrounded by th or td tags
-    def deTag(html: String) = ">([^<]+)<".r.findAllIn(html).matchData map {_.group(1)}
+ 	 // The values in a column are surrounded by <th> or <td> tags
+     def deTag(html: String) = ">([^<]+)<".r.findAllIn(html).matchData map {_.group(1)}
 
-	// Select just the low water info:
-    val tides = (deTag(headings_html) zip (deTag(times_html) zip deTag(heights_html))) collect { case ("LW", info) => info } 
+	 // Select just the low water info as a list of (time,height) pairs
+     val tides = (deTag(headings_html) zip (deTag(times_html) zip deTag(heights_html))) collect { case ("LW", info) => info } 
 	
-	val result = for ( (time_string, height_string) <- tides ) yield 
+	 val result = for ( (time_string, height_string) <- tides ) yield 
                Tide( time_string.toLocalTime, height_string.toMetre )
 	  
-	  Right(result.toList)
+	 Right(result.toList)
    }
    catch {
     case x:scala.MatchError => Left("Match failed")
