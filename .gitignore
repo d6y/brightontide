@@ -8,7 +8,6 @@ target
 lift_proto*
 lib_managed
 project/boot
-project/build.properties
 project/plugins/project
 project/plugins/src_managed
 
