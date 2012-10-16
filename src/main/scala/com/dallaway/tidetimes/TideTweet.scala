@@ -53,9 +53,8 @@ object TideTweet {
    
          val consumer = Consumer(consumer_key, consumer_secret)
          val single_access_token = Token(token_value, access_token_secret)
-    
-         val http = new Http()
-         http(Status.update(tweet, consumer, single_access_token) >- {println(_)} )
+
+         Http(Status.update(tweet, consumer, single_access_token) >- {println(_)} )
        
        case _ => 
          	println("Not posting as consumer and token information not provided on the command line")

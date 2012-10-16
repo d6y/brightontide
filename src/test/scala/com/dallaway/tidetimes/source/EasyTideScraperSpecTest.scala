@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009-2011 Richard Dallaway
+  Copyright 2009-2012 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ package com.dallaway.tidetimes.source
    limitations under the License.
 */
 
-import org.specs._
-import org.specs.runner._
-import org.specs.matcher._
+import org.specs2.mutable._
+import org.specs2.runner._
+import org.specs2.matcher._
 
 import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
 
