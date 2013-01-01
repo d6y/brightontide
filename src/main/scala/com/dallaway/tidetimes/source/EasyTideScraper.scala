@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009-2011 Richard Dallaway
+  Copyright 2009-2013 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,53 +16,51 @@ package com.dallaway.tidetimes.source
    limitations under the License.
 */
 
-import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
-import org.joda.time.format.{DateTimeFormat,DateTimeFormatter}
+import org.joda.time.{LocalDate}
+import org.joda.time.format.{DateTimeFormat}
 import scala.io.Source
-  
 
-object EasyTideScraper extends EasyTideScraper 
+
+object EasyTideScraper extends EasyTideScraper
 
 class EasyTideScraper extends TideSource {
 
   // Other ports are available
-  lazy val brighton_marina = "http://easytide.ukho.gov.uk/easytide/easytide/ShowPrediction.aspx?PortID=0082&PredictionLength=1"
+  lazy val brighton_marina = "http://easytide.ukho.gov.uk/EasyTide/EasyTide/ShowPrediction.aspx?PortID=0082&PredictionLength=1"
 
   def page = Source.fromURL(brighton_marina).mkString
- 
-  override def lowsFor(day:LocalDate) : Either[Error,List[Tide]] = {
- 
-   // We want the records that start with the date in this format: Mon 3 Jan
-   val date = DateTimeFormat.forPattern("E d MMM").print(day); 
-    
-   // The page is structured as three rows. We don't know how many columns, but it'll be the same for all rows.
-   // The rows are: headings (e.g., HW, LW); times (e.g., 12:30), heights (e.g., 1.6 m)
-   val PagePattern = 
-     """|(?sm).*<th class="HWLWTableHeaderCell">DATE</th>\s*</tr><tr>\s*
-        |<td><table[^>]*>\s*
-        |<tr>(.+?)</tr>\s*<tr>(.+?)</tr>\s*<tr>(.+?)</tr>.*""".stripMargin.replaceAll("\n","").replaceFirst("DATE", date).r
-    
-   try  {
-     val PagePattern(headings_html, times_html, heights_html) = page
-	 
- 	 // The values in a column are surrounded by <th> or <td> tags
-     def deTag(html: String) = ">([^<]+)<".r.findAllIn(html).matchData map {_.group(1)}
 
-	 // Select just the low water info as a list of (time,height) pairs
-     val tides = (deTag(headings_html) zip (deTag(times_html) zip deTag(heights_html))) collect { case ("LW", info) => info } 
-	
-	 val result = for ( (time_string, height_string) <- tides ) yield 
-               Tide( time_string.toLocalTime, height_string.toMetre )
-	  
-	 Right(result.toList)
-   }
-   catch {
-    case x:scala.MatchError => Left("Match failed")
-    case x:NumberFormatException => Left(x.getMessage)    
-   }	
-  
+  override def lowsFor(day:LocalDate) : Either[Error,List[Tide]] = {
+
+    // We want the records that start with the date in this format: Mon 3 Jan
+    val date = DateTimeFormat.forPattern("E d MMM").print(day)
+
+    // The page is structured as three rows. We don't know how many columns, but it'll be the same for all rows.
+    // The rows are: headings (e.g., HW, LW); times (e.g., 12:30), heights (e.g., 1.6 m)
+    val PagePattern =
+      """|(?sm).*<th class="HWLWTableHeaderCell".*>DATE</th>\s*</tr>\s*
+        |<tr>(.+?)</tr>\s*<tr>(.+?)</tr>\s*<tr>(.+?)</tr>.*""".stripMargin.replaceAll("\n","").replaceFirst("DATE", date).r
+
+    try {
+      val PagePattern(headings_html, times_html, heights_html) = page
+
+      // The values in a column are surrounded by <th> or <td> tags
+      def deTag(html: String) = ">([^<]+)<".r.findAllIn(html).matchData map {_.group(1)}
+
+      // Select just the low water info as a list of (time,height) pairs
+      val tides = (deTag(headings_html) zip (deTag(times_html) zip deTag(heights_html))) collect { case ("LW", info) => info }
+
+      val result = for ( (time_string, height_string) <- tides ) yield
+        Tide( time_string.toLocalTime, height_string.toMetre )
+
+      Right(result.toList)
+    } catch {
+      case x:scala.MatchError => Left("Match failed")
+      case x:NumberFormatException => Left(x.getMessage)
+    }
+
   }
- 
-  
-  
+
+
+
 }

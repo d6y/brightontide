@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009-2012 Richard Dallaway
+  Copyright 2009-2013 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@ package com.dallaway.tidetimes.source
 */
 
 import org.specs2.mutable._
-import org.specs2.runner._
-import org.specs2.matcher._
 
 import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
 
@@ -31,21 +29,18 @@ class EasyTideScraperSpecTest extends Specification {
     }   
   }
 
-
    "EasyTide screen scraper" should {
-     
-    "locate low tides when there are two a day" in { 
-   
-      val tides = MockScraper.use("src/test/resources/easytide20110303.html").lowsFor(new LocalDate(2011, 1, 3))
 
-      tides.right.get.length must be_==(2)
-      
-      val expected = List( Tide(new LocalTime(4,8), Metre(1.3)), 
-                           Tide(new LocalTime(16,33), Metre(1.1)) )
-      
-      tides.right.get must be_==(expected)
-    }
-    
+     "locate low tides in 2013 HTML format" in {
+
+       val tides = MockScraper.use("src/test/resources/easytide20130101.html").lowsFor(new LocalDate(2013, 1, 1))
+
+       tides.right.get.length must be_==(2)
+
+       val expected = Tide(new LocalTime(7,23), Metre(1.2)) :: Tide(new LocalTime(19,38), Metre(1.0)) :: Nil
+
+       tides.right.get must be_==(expected)
+     }
     
      
   }
