@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009-2011 Richard Dallaway
+  Copyright 2009-2013 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@ package com.dallaway.tidetimes.source
    limitations under the License.
 */
 
-import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
-import org.joda.time.format.{DateTimeFormat,DateTimeFormatter}
+import org.joda.time.LocalDate
+import org.joda.time.format.DateTimeFormat
 import scala.io.Source
 
 object VisitBrightonScraper extends VisitBrightonScraper 
 
 class VisitBrightonScraper extends TideSource {
 
-  def page = Source.fromURL("http://www.visitbrighton.com/site/tourist-information/tide-timetables").mkString
+  def page = Source.fromURL("http://www.visitbrighton.com/plan-your-visit/tides").mkString
   
    // Convert 7 -> "7th" etc
    implicit def ordinalWrapper(day:LocalDate) = new {
@@ -53,14 +53,14 @@ class VisitBrightonScraper extends TideSource {
 	 
      // The times and heights are in separate columns; multiple values separated by "<br/>"
      // When there is only one tide, a non-breaking space is used in place of the time
-     val tides = for { (time_string,height) <- low_times.split("<br/>") zip low_heights.split("<br/>") 
-                       if (time_string != "&nbsp;")
-       				} yield 
-       					Tide( time_string.toLocalTime, Metre(height.toDouble) )
+     val tides =
+       for {
+         (time_string,height) <- low_times.split("<br/>") zip low_heights.split("<br/>")
+         if (time_string != "&nbsp;")
+       } yield Tide( time_string.toLocalTime, Metre(height.toDouble) )
 	  
 	  Right(tides.toList)
-   }
-   catch {
+   } catch {
     case x:scala.MatchError => Left("Match failed")
     case x:NumberFormatException => Left(x.getMessage)    
    }	
