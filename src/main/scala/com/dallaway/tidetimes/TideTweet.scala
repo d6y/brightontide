@@ -18,6 +18,9 @@ package com.dallaway.tidetimes
 
 import source._
 import org.joda.time.{LocalDate,DateTimeZone}
+import twitter4j.TwitterFactory
+import twitter4j.auth.AccessToken
+import util.{Failure, Success, Try}
 
 object TideTweet {
 
@@ -34,11 +37,13 @@ object TideTweet {
     // Formulate the tweet to send:
     val tweet = gmt_tides match {
 
-      case Right(tide :: Nil) => today.toString("'Low tide for 'EE d MMM': '") + tide.forZone(tz)
+      case Success(tide :: Nil) => today.toString("'Low tide for 'EE d MMM': '") + tide.forZone(tz)
 
-      case Right(tides) => today.toString("'Low tides for 'EE d MMM': '") + tides.map {_.forZone(tz)}.mkString(", ")
+      case Success(tides) => today.toString("'Low tides for 'EE d MMM': '") + tides.map {_.forZone(tz)}.mkString(", ")
 
-      case _ => "No tide times found today. @d6y please help."
+      case Failure(msg) =>
+        println(msg)
+        "Sorry: couldn't lookup the tides today. @d6y please fix me!"
     }
 
 
@@ -47,14 +52,12 @@ object TideTweet {
       // post the tweet via http://dev.twitter.com/pages/oauth_single_token
       case Array(consumer_key, token_value, consumer_secret, access_token_secret) =>
 
-        import dispatch._
-        import dispatch.twitter._
-        import dispatch.oauth._
+        val twitter = TwitterFactory.getSingleton
+        twitter.setOAuthConsumer(consumer_key, consumer_secret)
+        twitter.setOAuthAccessToken(new AccessToken(token_value, access_token_secret))
+        val status = Try(twitter.updateStatus(tweet))
+        println(status.map(_.getText))
 
-        val consumer = Consumer(consumer_key, consumer_secret)
-        val single_access_token = Token(token_value, access_token_secret)
-
-        Http(Status.update(tweet, consumer, single_access_token) >- {println(_)} )
 
       case _ =>
         println("Not posting as consumer and token information not provided on the command line")

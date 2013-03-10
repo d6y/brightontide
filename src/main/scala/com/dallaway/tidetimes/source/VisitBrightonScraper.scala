@@ -19,6 +19,7 @@ package com.dallaway.tidetimes.source
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 import scala.io.Source
+import util.Try
 
 object VisitBrightonScraper extends VisitBrightonScraper 
 
@@ -36,7 +37,7 @@ class VisitBrightonScraper extends TideSource {
 	   }
     }
    
-  override def lowsFor(day:LocalDate) : Either[Error,List[Tide]] = {
+  def lowsFor(day:LocalDate) = {
  
    // We want the records that start with the date in this format: 10th May 2009
    val date = day.ordinal + DateTimeFormat.forPattern(" MMMM yyyy").print(day); 
@@ -48,7 +49,7 @@ class VisitBrightonScraper extends TideSource {
         |<td class="Tide">Low</td><td class="Time">(.+?)</td><td class="Height">(.+?)</td></tr>
         |</table></div>.*""".stripMargin.replaceAll("\n","").replaceFirst("DATE", date).r
     
-   try  {
+   Try {
      val Pattern(high_times,high_heights,low_times,low_heights) = page
 	 
      // The times and heights are in separate columns; multiple values separated by "<br/>"
@@ -59,11 +60,8 @@ class VisitBrightonScraper extends TideSource {
          if (time_string != "&nbsp;")
        } yield Tide( time_string.toLocalTime, Metre(height.toDouble) )
 	  
-	  Right(tides.toList)
-   } catch {
-    case x:scala.MatchError => Left("Match failed")
-    case x:NumberFormatException => Left(x.getMessage)    
-   }	
+	  tides.toList
+   }
   
   }
  

@@ -17,8 +17,8 @@ package com.dallaway.tidetimes.source
 */
 
 import org.specs2.mutable._
+import org.joda.time.{LocalDate,LocalTime}
 
-import org.joda.time.{LocalDate,LocalTime,DateTimeZone}
 
 class EasyTideScraperSpecTest extends Specification {
 
@@ -34,12 +34,10 @@ class EasyTideScraperSpecTest extends Specification {
      "locate low tides in 2013 HTML format" in {
 
        val tides = MockScraper.use("src/test/resources/easytide20130101.html").lowsFor(new LocalDate(2013, 1, 1))
-
-       tides.right.get.length must be_==(2)
+       tides.map(_.length) must beSuccess(2)
 
        val expected = Tide(new LocalTime(7,23), Metre(1.2)) :: Tide(new LocalTime(19,38), Metre(1.0)) :: Nil
-
-       tides.right.get must be_==(expected)
+       tides must beSuccess(expected)
      }
     
      
