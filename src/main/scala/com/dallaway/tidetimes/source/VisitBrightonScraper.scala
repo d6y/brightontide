@@ -1,5 +1,8 @@
 package com.dallaway.tidetimes.source
 
+import scala.language.reflectiveCalls
+import scala.language.implicitConversions
+
 /*
   Copyright 2009-2013 Richard Dallaway
 
@@ -21,12 +24,12 @@ import org.joda.time.format.DateTimeFormat
 import scala.io.Source
 import util.Try
 
-object VisitBrightonScraper extends VisitBrightonScraper 
+object VisitBrightonScraper extends VisitBrightonScraper
 
 class VisitBrightonScraper extends TideSource {
 
   def page = Source.fromURL("http://www.visitbrighton.com/plan-your-visit/tides").mkString
-  
+
    // Convert 7 -> "7th" etc
    implicit def ordinalWrapper(day:LocalDate) = new {
 	   def ordinal = day.getDayOfMonth match {
@@ -36,22 +39,22 @@ class VisitBrightonScraper extends TideSource {
 	     case n => n+"th"
 	   }
     }
-   
+
   def lowsFor(day:LocalDate) = {
- 
+
    // We want the records that start with the date in this format: 10th May 2009
-   val date = day.ordinal + DateTimeFormat.forPattern(" MMMM yyyy").print(day); 
-    
-   val Pattern = 
+   val date = day.ordinal + DateTimeFormat.forPattern(" MMMM yyyy").print(day);
+
+   val Pattern =
      """|(?sm).*<div class="TidalDataEntry"><h3>DATE</h3><table class="TidalData"><tr>
         |<th>&nbsp;</th><th class="Time">Time</th><th class="Height">Height .m.</th></tr><tr>
         |<td class="Tide">High</td><td class="Time">(.+?)</td><td class="Height">(.+?)</td></tr><tr>
         |<td class="Tide">Low</td><td class="Time">(.+?)</td><td class="Height">(.+?)</td></tr>
         |</table></div>.*""".stripMargin.replaceAll("\n","").replaceFirst("DATE", date).r
-    
+
    Try {
      val Pattern(high_times,high_heights,low_times,low_heights) = page
-	 
+
      // The times and heights are in separate columns; multiple values separated by "<br/>"
      // When there is only one tide, a non-breaking space is used in place of the time
      val tides =
@@ -59,12 +62,12 @@ class VisitBrightonScraper extends TideSource {
          (time_string,height) <- low_times.split("<br/>") zip low_heights.split("<br/>")
          if (time_string != "&nbsp;")
        } yield Tide( time_string.toLocalTime, Metre(height.toDouble) )
-	  
+
 	  tides.toList
    }
-  
+
   }
- 
-  
-  
+
+
+
 }

@@ -1,5 +1,7 @@
 package com.dallaway.tidetimes.source
 
+import scala.language.implicitConversions
+
 /*
   Copyright 2009-2013 Richard Dallaway
 
