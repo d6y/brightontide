@@ -28,8 +28,8 @@ object TideTweet {
 
     val today = new LocalDate
 
-    // val gmt_tides = VisitBrightonScraper.lowsFor(today)
-    val gmt_tides = EasyTideScraper.lowsFor(today)
+    val gmt_tides = VisitBrightonScraper.lowsFor(today)
+    //val gmt_tides = EasyTideScraper.lowsFor(today)
 
     // Time tides are in GMT, but we will later convert to whatever timezone we're in:
     val tz = DateTimeZone.getDefault
