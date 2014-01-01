@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009-2013 Richard Dallaway
+  Copyright 2009-2014 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package com.dallaway.tidetimes.source
 import org.specs2.mutable._
 
 import org.joda.time.{LocalDate,LocalTime}
-import java.io.IOException
 
 class VisitBrightonScraperSpecTest extends Specification {
 

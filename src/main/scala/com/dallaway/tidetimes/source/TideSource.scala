@@ -1,9 +1,7 @@
 package com.dallaway.tidetimes.source
 
-import scala.language.implicitConversions
-
 /*
-  Copyright 2009-2013 Richard Dallaway
+  Copyright 2009-2014 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,6 +16,7 @@ import scala.language.implicitConversions
    limitations under the License.
 */
 
+import scala.language.implicitConversions
 
 case class Metre(value:Double) {
   override def toString = value+"m"
