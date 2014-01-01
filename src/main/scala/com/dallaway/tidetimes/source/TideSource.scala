@@ -27,7 +27,8 @@ import util.Try
 
 case class Tide(when:LocalTime, height:Metre) {
   override val toString = "%s (%s)".format( when.toString("HH:mm"), height )
-  def forZone(destZone:DateTimeZone) = Tide(when.toDateTimeToday(DateTimeZone.forID("GMT")).withZone(destZone).toLocalTime(), height)
+  def forZone(destZone:DateTimeZone) =
+    Tide(when.toDateTimeToday(DateTimeZone.forID("GMT")).withZone(destZone).toLocalTime(), height)
 }
 
 trait TideSource {
