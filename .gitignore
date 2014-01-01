@@ -1,4 +1,5 @@
 .classpath
+.cache
 .manager
 .settings
 .project
