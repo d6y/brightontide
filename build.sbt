@@ -14,7 +14,6 @@ libraryDependencies ++= {
 
 parallelExecution in Test := false
 
-// Customize any further dependencies as desired
 libraryDependencies ++= Seq(
   "org.scalaz"        %% "scalaz-core"     % "7.0.5",
   "org.specs2"        %% "specs2"          % "2.3.7"              % "test",
@@ -22,8 +21,3 @@ libraryDependencies ++= Seq(
   "ch.qos.logback"     % "logback-classic" % "1.0.13"            % "compile->default",
   "org.slf4j"          % "jcl-over-slf4j"  % "1.7.5"            % "test->default"// only used for debugging.
 )
-
-EclipseKeys.withSource := true
-
-EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
-
