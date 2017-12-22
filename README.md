@@ -1,5 +1,5 @@
 Brighton Tide is a script to scrape the tide time information post them to Twitter,
-as described in [a blog post of 2009](http://richard.dallaway.com/still-loving-the-scala).
+as described in [a blog post of 2009](http://richard.dallaway.com/still-loving-the-scala.html).
 
 
 Running the app

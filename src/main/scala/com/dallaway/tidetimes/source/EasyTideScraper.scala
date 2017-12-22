@@ -26,9 +26,8 @@ import org.joda.time.format.{DateTimeFormat}
 object EasyTideScraper extends EasyTideScraper
 
 class EasyTideScraper extends TideSource {
-
-  // Other ports are available
-  lazy val brighton_marina = "http://easytide.ukho.gov.uk/EasyTide/EasyTide/ShowPrediction.aspx?PortID=0082&PredictionLength=1"
+  
+  lazy val brighton_marina = "http://www.ukho.gov.uk/easytide/EasyTide/ShowPrediction.aspx?PortID=0082&PredictionLength=1"
 
   def page = Source.fromURL(brighton_marina).mkString
 
