@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009-2014 Richard Dallaway
+  Copyright 2009-2018 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.dallaway.tidetimes.source
 
 import org.specs2.mutable._
 
-import org.joda.time.{LocalDate,LocalTime}
+import java.time.{LocalDate,LocalTime}
 
 class VisitBrightonScraperSpecTest extends Specification {
 
@@ -34,12 +34,12 @@ class VisitBrightonScraperSpecTest extends Specification {
      
     "locate low tide in first day" in { 
    
-      val tides = MockScraper.use("src/test/resources/visitbrighton07052009.html").lowsFor(new LocalDate(2009, 5, 7))
+      val tides = MockScraper.use("src/test/resources/visitbrighton07052009.html").lowsFor(LocalDate.of(2009, 5, 7))
 
-     tides.map(_.length) must beSuccess(2)
+      tides.map(_.length) must beSuccess(2)
       
-      val expected = List( Tide(new LocalTime(3,38), Metre(1.0)), 
-                           Tide(new LocalTime(15,59), Metre(1.0)) )
+      val expected = List( Tide(LocalTime.of(3,38), Metre(1.0)), 
+                           Tide(LocalTime.of(15,59), Metre(1.0)) )
       
       tides must beSuccess(expected)
     }
@@ -47,11 +47,11 @@ class VisitBrightonScraperSpecTest extends Specification {
        
     "locate low tide in last day" in { 
    
-      val tides = MockScraper.use("src/test/resources/visitbrighton07052009.html").lowsFor(new LocalDate(2009, 5, 13))
+      val tides = MockScraper.use("src/test/resources/visitbrighton07052009.html").lowsFor(LocalDate.of(2009, 5, 13))
       tides.map(_.length) must beSuccess(2)
       
-      val expected = List( Tide(new LocalTime(7,20), Metre(1.2)), 
-                           Tide(new LocalTime(19,39), Metre(1.4)) )
+      val expected = List( Tide(LocalTime.of(7,20), Metre(1.2)), 
+                           Tide(LocalTime.of(19,39), Metre(1.4)) )
       
       tides must beSuccess(expected)
     }
@@ -60,10 +60,10 @@ class VisitBrightonScraperSpecTest extends Specification {
     "Can handle days when there is only one tide" in {
 
      
-      val tides = MockScraper.use("src/test/resources/visitbrighton18052009.html").lowsFor(new LocalDate(2009, 5, 18))
+      val tides = MockScraper.use("src/test/resources/visitbrighton18052009.html").lowsFor(LocalDate.of(2009, 5, 18))
       tides.map(_.length) must beSuccess(1)
       
-      val expected = List( Tide(new LocalTime(11,31), Metre(2.1)) )
+      val expected = List( Tide(LocalTime.of(11,31), Metre(2.1)) )
       
       tides must beSuccess(expected)
     
@@ -71,7 +71,7 @@ class VisitBrightonScraperSpecTest extends Specification {
 
 
 	"Can handle days when no tide data is available" in { 
-      val tides = MockScraper.use("src/test/resources/visitbrighton03012010.html").lowsFor(new LocalDate(2011, 3, 1))
+      val tides = MockScraper.use("src/test/resources/visitbrighton03012010.html").lowsFor(LocalDate.of(2011, 3, 1))
 	    tides must beFailure
     }
 

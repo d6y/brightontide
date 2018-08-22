@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009-2014 Richard Dallaway
+  Copyright 2009-2018 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import scala.language.implicitConversions
 import scala.io.Source
 import util.Try
 
-import org.joda.time.LocalDate
-import org.joda.time.format.DateTimeFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 object VisitBrightonScraper extends VisitBrightonScraper
 
@@ -43,7 +43,7 @@ class VisitBrightonScraper extends TideSource {
   def lowsFor(day:LocalDate) = {
 
    // We want the records that start with the date in this format: 10th May 2009
-   val date = day.ordinal + DateTimeFormat.forPattern(" MMMM yyyy").print(day)
+   val date = day.ordinal + DateTimeFormatter.ofPattern(" MMMM yyyy").format(day)
 
    val Pattern =
      """|(?sm).*<div class="TidalDataEntry"><h3>DATE</h3><table class="TidalData"><tr>

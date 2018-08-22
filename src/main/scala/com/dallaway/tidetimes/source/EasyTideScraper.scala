@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009-2014 Richard Dallaway
+  Copyright 2009-2018 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import scala.language.reflectiveCalls
 import util.Try
 import scala.io.Source
 
-import org.joda.time.{LocalDate}
-import org.joda.time.format.{DateTimeFormat}
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 object EasyTideScraper extends EasyTideScraper
 
@@ -34,7 +34,7 @@ class EasyTideScraper extends TideSource {
   def lowsFor(day:LocalDate) = {
 
     // We want the records that start with the date in this format: Mon 3 Jan
-    val date = DateTimeFormat.forPattern("E d MMM").print(day)
+    val date = DateTimeFormatter.ofPattern("E d MMM").format(day)
 
     // The page is structured as three rows. We don't know how many columns, but it'll be the same for all rows.
     // The rows are: headings (e.g., HW, LW); times (e.g., 12:30), heights (e.g., 1.6 m)

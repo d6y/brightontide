@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes.source
 
 /*
-  Copyright 2009-2014 Richard Dallaway
+  Copyright 2009-2018 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,17 +17,19 @@ package com.dallaway.tidetimes.source
  */
 
 import org.specs2.mutable._
-import org.joda.time.{LocalTime,DateTimeZone}
+import java.time.{LocalTime, LocalDate, ZonedDateTime, ZoneId, ZoneOffset}
 
 class TideSpecTest extends Specification {
 
   "Tide" should {
     "Be able to convert from GMT to BST" in {
       val m = new Metre(1)
-      val gmt = new Tide( new LocalTime(12,34), m)
-      val bst = new Tide( new LocalTime(13,34), m)
+      val summer = LocalDate.of(2018, 7, 1) // summer time, humans talk in terms of BST
+      val gmt = new Tide(LocalTime.of(12,34), m)
+      val bst = new Tide(LocalTime.of(13,34), m)
       
-      gmt.forZone(DateTimeZone.forOffsetHours(1)) must be_==(bst)
+      import com.dallaway.tidetimes.TzAdjustment._
+      gmt.forZone(ZoneId.of("Europe/London"), summer) must be_==(bst)
       
     }
   }

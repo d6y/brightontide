@@ -1,7 +1,7 @@
 package com.dallaway.tidetimes
 
 /*
-  Copyright 2009-2014 Richard Dallaway
+  Copyright 2009-2018 Richard Dallaway
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,28 +17,41 @@ package com.dallaway.tidetimes
 */
 
 import source._
-import org.joda.time.{LocalDate,DateTimeZone}
+import java.time.{ZoneId,LocalDate,ZonedDateTime}
+import java.time.format.DateTimeFormatter
 import twitter4j.TwitterFactory
 import twitter4j.auth.AccessToken
 import util.{Failure, Success, Try}
+
+object TzAdjustment {
+    implicit class TideOps(tide: Tide) {
+      def forZone(destZone: ZoneId, at: LocalDate): Tide = {
+        val localDateTime = ZonedDateTime.of(at, tide.when, ZoneId.of("UTC")).withZoneSameInstant(destZone)
+        Tide(localDateTime.toLocalTime(), tide.height)
+      }
+    }
+}
 
 object TideTweet {
 
   def main(args:Array[String]) {
 
-    val today = new LocalDate
+    val today = LocalDate.now()
+    val date: String = DateTimeFormatter.ofPattern("EE d MMM").format(today)
 
     val gmt_tides = VisitBrightonScraper.lowsFor(today) orElse EasyTideScraper.lowsFor(today)
 
     // Time tides are in GMT, but we will later convert to whatever timezone we're in:
-    val tz = DateTimeZone.getDefault
+    import TzAdjustment._
+    val brighton = ZoneId.of("Europe/London")
+
 
     // Formulate the tweet to send:
     val tweet = gmt_tides match {
 
-      case Success(tide :: Nil) => today.toString("'Low tide for 'EE d MMM': '") + tide.forZone(tz)
+      case Success(tide :: Nil) => s"Low tide for $date: " + tide.forZone(brighton, today)
 
-      case Success(tides) => today.toString("'Low tides for 'EE d MMM': '") + tides.map {_.forZone(tz)}.mkString(", ")
+      case Success(tides) => s"Low tides for $date: " + tides.map {_.forZone(brighton, today)}.mkString(", ")
 
       case Failure(msg) =>
         println(msg)
