@@ -22,6 +22,8 @@ import java.time.format.DateTimeFormatter
 import twitter4j.TwitterFactory
 import twitter4j.auth.AccessToken
 import util.{Failure, Success, Try}
+import cats.syntax.show._
+import cats.Show
 
 object TzAdjustment {
     implicit class TideOps(tide: Tide) {
@@ -33,6 +35,9 @@ object TzAdjustment {
 }
 
 object TideTweet {
+
+  implicit val tideShow: Show[Tide] = tide =>
+    s"${tide.when} (${tide.height.value}m)"
 
   def main(args:Array[String]) {
 
@@ -49,9 +54,9 @@ object TideTweet {
     // Formulate the tweet to send:
     val tweet = gmt_tides match {
 
-      case Success(tide :: Nil) => s"Low tide for $date: " + tide.forZone(brighton, today)
+      case Success(tide :: Nil) => s"Low tide for $date: " + tide.forZone(brighton, today).show
 
-      case Success(tides) => s"Low tides for $date: " + tides.map {_.forZone(brighton, today)}.mkString(", ")
+      case Success(tides) => s"Low tides for $date: " + tides.map {_.forZone(brighton, today).show}.mkString(", ")
 
       case Failure(msg) =>
         println(msg)

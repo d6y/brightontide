@@ -5,7 +5,9 @@ scalaVersion := "2.12.6"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 libraryDependencies ++= Seq(
-  "org.twitter4j" % "twitter4j-core" % "4.0.7",
+  "org.twitter4j" %  "twitter4j-core" % "4.0.7",
+  "org.typelevel" %% "cats-core"      % "1.2.0",
+
 )
 
 parallelExecution in Test := false
