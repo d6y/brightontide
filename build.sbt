@@ -4,9 +4,14 @@ scalaVersion := "2.12.6"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
+val cirisVersion = "0.10.2"
+
 libraryDependencies ++= Seq(
   "org.twitter4j" % "twitter4j-core" % "4.0.7",
   "org.typelevel" %% "cats-core" % "1.2.0",
+  "com.softwaremill.sttp" %% "core" % "1.3.0",
+  "is.cir" %% "ciris-cats" % cirisVersion,
+  "is.cir" %% "ciris-core" % cirisVersion,
 )
 
 parallelExecution in Test := false
