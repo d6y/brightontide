@@ -14,10 +14,10 @@ package com.dallaway.tidetimes
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
+ */
 
 import source._
-import java.time.{ZoneId,LocalDate,ZonedDateTime}
+import java.time.{ZoneId, LocalDate, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 import twitter4j.TwitterFactory
 import twitter4j.auth.AccessToken
@@ -26,12 +26,14 @@ import cats.syntax.show._
 import cats.Show
 
 object TzAdjustment {
-    implicit class TideOps(tide: Tide) {
-      def forZone(destZone: ZoneId, at: LocalDate): Tide = {
-        val localDateTime = ZonedDateTime.of(at, tide.when, ZoneId.of("UTC")).withZoneSameInstant(destZone)
-        Tide(localDateTime.toLocalTime(), tide.height)
-      }
+  implicit class TideOps(tide: Tide) {
+    def forZone(destZone: ZoneId, at: LocalDate): Tide = {
+      val localDateTime = ZonedDateTime
+        .of(at, tide.when, ZoneId.of("UTC"))
+        .withZoneSameInstant(destZone)
+      Tide(localDateTime.toLocalTime(), tide.height)
     }
+  }
 }
 
 object TideTweet {
@@ -39,54 +41,58 @@ object TideTweet {
   implicit val tideShow: Show[Tide] = tide =>
     s"${tide.when} (${tide.height.value}m)"
 
-  def main(args:Array[String]) {
+  def main(args: Array[String]) {
 
     val today = LocalDate.now()
     val date: String = DateTimeFormatter.ofPattern("EE d MMM").format(today)
 
-    val gmt_tides = VisitBrightonScraper.lowsFor(today) orElse EasyTideScraper.lowsFor(today)
+    val gmt_tides = VisitBrightonScraper.lowsFor(today) orElse EasyTideScraper
+      .lowsFor(today)
 
     // Time tides are in GMT, but we will later convert to whatever timezone we're in:
     import TzAdjustment._
     val brighton = ZoneId.of("Europe/London")
 
-
     // Formulate the tweet to send:
     val tweet = gmt_tides match {
 
-      case Success(tide :: Nil) => s"Low tide for $date: " + tide.forZone(brighton, today).show
+      case Success(tide :: Nil) =>
+        s"Low tide for $date: " + tide.forZone(brighton, today).show
 
-      case Success(tides) => s"Low tides for $date: " + tides.map {_.forZone(brighton, today).show}.mkString(", ")
+      case Success(tides) =>
+        s"Low tides for $date: " + tides
+          .map { _.forZone(brighton, today).show }
+          .mkString(", ")
 
       case Failure(msg) =>
         println(msg)
         "@d6y please fix me! I couldn't lookup the tides today. Sorry."
     }
 
-
     args match {
 
       // post the tweet via http://dev.twitter.com/pages/oauth_single_token
-      case Array(consumer_key, token_value, consumer_secret, access_token_secret) =>
-
+      case Array(
+          consumer_key,
+          token_value,
+          consumer_secret,
+          access_token_secret) =>
         val twitter = TwitterFactory.getSingleton
         twitter.setOAuthConsumer(consumer_key, consumer_secret)
-        twitter.setOAuthAccessToken(new AccessToken(token_value, access_token_secret))
+        twitter.setOAuthAccessToken(
+          new AccessToken(token_value, access_token_secret))
         val status = Try(twitter.updateStatus(tweet))
         println(status.map(_.getText))
 
-
       case _ =>
-        println("Not posting as consumer and token information not provided on the command line")
-        println("Usage: TideTweet consumer-key token-value consumer-secret token-secret")
+        println(
+          "Not posting as consumer and token information not provided on the command line")
+        println(
+          "Usage: TideTweet consumer-key token-value consumer-secret token-secret")
         println(tweet)
 
     }
 
-
   }
-
-
-
 
 }

@@ -25,12 +25,12 @@ class TideSpecTest extends Specification {
     "Be able to convert from GMT to BST" in {
       val m = new Metre(1)
       val summer = LocalDate.of(2018, 7, 1) // summer time, humans talk in terms of BST
-      val gmt = new Tide(LocalTime.of(12,34), m)
-      val bst = new Tide(LocalTime.of(13,34), m)
-      
+      val gmt = new Tide(LocalTime.of(12, 34), m)
+      val bst = new Tide(LocalTime.of(13, 34), m)
+
       import com.dallaway.tidetimes.TzAdjustment._
       gmt.forZone(ZoneId.of("Europe/London"), summer) must be_==(bst)
-      
+
     }
   }
 }

@@ -14,7 +14,7 @@ package com.dallaway.tidetimes.source
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
+ */
 
 import scala.language.reflectiveCalls
 import util.Try
@@ -26,12 +26,13 @@ import java.time.format.DateTimeFormatter
 object EasyTideScraper extends EasyTideScraper
 
 class EasyTideScraper extends TideSource {
-  
-  lazy val brighton_marina = "http://www.ukho.gov.uk/easytide/EasyTide/ShowPrediction.aspx?PortID=0082&PredictionLength=1"
+
+  lazy val brighton_marina =
+    "http://www.ukho.gov.uk/easytide/EasyTide/ShowPrediction.aspx?PortID=0082&PredictionLength=1"
 
   def page = Source.fromURL(brighton_marina).mkString
 
-  def lowsFor(day:LocalDate) = {
+  def lowsFor(day: LocalDate) = {
 
     // We want the records that start with the date in this format: Mon 3 Jan
     val date = DateTimeFormatter.ofPattern("E d MMM").format(day)
@@ -40,25 +41,31 @@ class EasyTideScraper extends TideSource {
     // The rows are: headings (e.g., HW, LW); times (e.g., 12:30), heights (e.g., 1.6 m)
     val PagePattern =
       """|(?sm).*<th class="HWLWTableHeaderCell".*>DATE</th>\s*</tr>\s*
-        |<tr>(.+?)</tr>\s*<tr>(.+?)</tr>\s*<tr>(.+?)</tr>.*""".stripMargin.replaceAll("\n","").replaceFirst("DATE", date).r
+        |<tr>(.+?)</tr>\s*<tr>(.+?)</tr>\s*<tr>(.+?)</tr>.*""".stripMargin
+        .replaceAll("\n", "")
+        .replaceFirst("DATE", date)
+        .r
 
     Try {
       val PagePattern(headings_html, times_html, heights_html) = page
 
       // The values in a column are surrounded by <th> or <td> tags
-      def deTag(html: String) = ">([^<]+)<".r.findAllIn(html).matchData map {_.group(1)}
+      def deTag(html: String) = ">([^<]+)<".r.findAllIn(html).matchData map {
+        _.group(1)
+      }
 
       // Select just the low water info as a list of (time,height) pairs
-      val tides = (deTag(headings_html) zip (deTag(times_html) zip deTag(heights_html))) collect { case ("LW", info) => info }
+      val tides = (deTag(headings_html) zip (deTag(times_html) zip deTag(
+        heights_html))) collect {
+        case ("LW", info) => info
+      }
 
-      val result = for ( (time_string, height_string) <- tides ) yield
-        Tide( time_string.toLocalTime, height_string.toMetre )
+      val result = for ((time_string, height_string) <- tides)
+        yield Tide(time_string.toLocalTime, height_string.toMetre)
 
       result.toList
     }
 
   }
-
-
 
 }
